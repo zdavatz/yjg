@@ -1,6 +1,7 @@
 import {
   Meteor
 } from 'meteor/meteor';
+
 import assesLib from './_assets.js'
 import App from './ip_agent.js'
 import _ from 'lodash'
@@ -8,8 +9,18 @@ import _ from 'lodash'
 
 import '../lib/col.js';
 
+require('dotenv').config();
 
 
+
+if (!Meteor.settings.locationiqComId) {
+  console.log("ERROR: locationiq_Com_Id token is not set, please add the token from https://locationiq.com  to your settings.json file")
+  throw new Meteor.Error('key-missing', "ERROR: locationiq_Com_Id key is not set, please add the token from https://locationiq.com  to your settings.json file")
+  return
+}else{
+  console.log("Key: ", Meteor.settings.locationiqComId)
+  var locationiqComId = Meteor.settings.locationiqComId
+}
 
 // country code      : iso country code, 2 characters
 // postal code       : varchar(20)
@@ -46,7 +57,7 @@ Meteor.methods({
 
    
 
-    var x = HTTP.get('https://eu1.locationiq.com/v1/reverse.php?key=66d71867dbebb6&lat='+coordinates.lat+'&lon='+coordinates.lng+'&format=json');
+    var x = HTTP.get('https://eu1.locationiq.com/v1/reverse.php?key='+locationiqComId+'&lat='+coordinates.lat+'&lon='+coordinates.lng+'&format=json');
       if (x && x.data) {
         console.log(x)
           return x;
