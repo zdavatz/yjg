@@ -32,7 +32,7 @@ settings.json
  $ meteor --settings settings.json
 
 // with SSL support
- $ meteor --settings settings.json --port 3001
+ $ meteor --settings settings.json --port 3300
 
  ```
 
