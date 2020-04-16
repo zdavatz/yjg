@@ -1,0 +1,42 @@
+<head>
+  <title>YJG </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="Medevel.com" />
+</head>
+<body>
+  {{>app}}
+</body>
+<template name="app">
+  <div class="hero is-fullheight is-primary">
+    <div class="hero-content">
+      <div class="columns is-multiline is-centered">
+        <div class="column is-4">
+          <!--  -->
+          <br />
+          <br />
+          <br />
+          <a class="setLocation button is-rounded is-white is-large " href="#">
+            Set your location
+          </a>
+         
+          <hr/>
+          {{getSetting 'msg'}}
+          <br/>
+          {{#if getSetting 'ipData'}}
+          <br />
+          <br />
+          <p class="notification is-white is-clipped">
+            <code>{{getSetting 'ipData'}}</code>
+            {{#if getSetting 'position'}}
+            <hr />
+            <code>
+              {{getSetting 'position'}}
+            </code>
+            {{/if}}
+          </p>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
