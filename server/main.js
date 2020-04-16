@@ -146,3 +146,39 @@ function createRow(head, row) {
 //       return x.data;
 //   }
 // }
+
+/**
+ * SSL
+ */
+Meteor.startup(function () {
+  if (Meteor.settings.isSSL) {
+    const isProduction = process.env.NODE_ENV !== 'development';
+    if (!isProduction) {
+      const httpProxy = require('http-proxy');
+      const SSL = function (key, cert, port) {
+        const [, , host, targetPort] = Meteor.absoluteUrl().match(/([a-zA-Z]+):\/\/([\-\w\.]+)(?:\:(\d{0,5}))?/);
+        const proxy = httpProxy
+          .createServer({
+            target: {
+              host,
+              port: targetPort,
+            },
+            ssl: {
+              key,
+              cert,
+            },
+            ws: true,
+            xfwd: true,
+          })
+          .listen(port);
+
+        proxy.on('error', err => {
+          console.log(`HTTP-PROXY NPM MODULE ERROR: ${err}`);
+        });
+        console.log('PROXY RUNNING ON', port, proxy);
+      };
+      //
+      SSL(Assets.getText('key.pem'), Assets.getText('cert.pem'), 3100);
+    }
+  }
+});

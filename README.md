@@ -13,12 +13,23 @@ ywesee javascript geolocation
 ## Configure
 
 Get the map token from https://locationiq.com
+- copy settings.example.json to settings.json
+- add the token
+  
+settings.json 
+```
+{
+    "locationiqComId": "",
+    "isSSL": false
+}
+
+```
 
 ## Run 
  ```
  $ meteor npm i
 
- $ meteor 
+ $ meteor --settings settings.json
 
  ```
 
