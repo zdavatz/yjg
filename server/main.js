@@ -13,14 +13,14 @@ require('dotenv').config();
 
 
 
-if (!Meteor.settings.locationiqComId) {
-  console.log("ERROR: locationiq_Com_Id token is not set, please add the token from https://locationiq.com  to your settings.json file")
-  throw new Meteor.Error('key-missing', "ERROR: locationiq_Com_Id key is not set, please add the token from https://locationiq.com  to your settings.json file")
-  return
-}else{
-  console.log("Key: ", Meteor.settings.locationiqComId)
-  var locationiqComId = Meteor.settings.locationiqComId
-}
+// if (!Meteor.settings.locationiqComId) {
+//   console.log("ERROR: locationiq_Com_Id token is not set, please add the token from https://locationiq.com  to your settings.json file")
+//   throw new Meteor.Error('key-missing', "ERROR: locationiq_Com_Id key is not set, please add the token from https://locationiq.com  to your settings.json file")
+//   return
+// }else{
+//   console.log("Key: ", Meteor.settings.locationiqComId)
+//   var locationiqComId = Meteor.settings.locationiqComId
+// }
 
 // country code      : iso country code, 2 characters
 // postal code       : varchar(20)
@@ -52,13 +52,15 @@ Meteor.methods({
     // console.log(data)
 
     // var s = HTTP.get('https://api3.geo.admin.ch/rest/services/api/MapServer/identify?geometryType=esriGeometryPoint&geometry='+ coordinates.lng +","+ coordinates.lat +'&imageDisplay=0,0,0&mapExtent=0,0,0,0&tolerance=0&layers=all:ch.swisstopo.swissboundaries3d-gemeinde-flaeche.fill,ch.swisstopo-vd.ortschaftenverzeichnis_plz&returnGeometry=false')
-
+    // var old = 'https://eu1.locationiq.com/v1/reverse.php?key='+locationiqComId+'&lat='+coordinates.lat+'&lon='+coordinates.lng+'&format=json'
     // console.log(s)
 
-   
 
-    var x = HTTP.get('https://eu1.locationiq.com/v1/reverse.php?key='+locationiqComId+'&lat='+coordinates.lat+'&lon='+coordinates.lng+'&format=json');
-      if (x && x.data) {
+    var url =  'http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting='+coordinates.lng+'&northing='+ coordinates.lat
+   
+   
+    var x = HTTP.get(url);
+      if (x) {
         console.log(x)
           return x;
       }
@@ -79,7 +81,7 @@ Meteor.methods({
     // }).fetch();
 
     // console.log(s.length, s[0])
-    return s
+    // return s
   }
 })
 
