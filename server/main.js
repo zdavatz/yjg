@@ -62,6 +62,7 @@ Meteor.methods({
     var url = 'http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting=' + coordinates.lng + '&northing=' + coordinates.lat + "&format=json";
 
 
+    var url = "http://geodesy.geo.admin.ch/reframe/wgs84tolv03?easting="+coordinates.lng+"&northing="+coordinates.lat+"&altitude=550.0%20&format=json"
     var x = HTTP.get(url);
     if (x && (x.statusCode == 200)) {
       console.log('Success:')
@@ -76,6 +77,7 @@ Meteor.methods({
     console.log('Coords API Updates', data)
 
     var zipAPI = "https://api3.geo.admin.ch/rest/services/api/MapServer/identify?geometryType=esriGeometryPoint&geometry=" + data.easting + "," + data.northing + "&imageDisplay=0,0,0&mapExtent=0,0,0,0&tolerance=0&layers=all:ch.swisstopo.swissboundaries3d-gemeinde-flaeche.fill,ch.swisstopo-vd.ortschaftenverzeichnis_plz&returnGeometry=false"
+
 
     console.log(zipAPI)
 
