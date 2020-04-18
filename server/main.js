@@ -47,7 +47,7 @@ Zips._ensureIndex({
 
 Meteor.methods({
   setLocation(coordinates) {
-    console.log('coordinates', coordinates)
+   
     var data;
     // var ip = App.getIp(this)
     // console.log(ip)
@@ -75,22 +75,22 @@ Meteor.methods({
 
     console.log('Coords API Updates', data)
 
-    var zipAPI = "https://api3.geo.admin.ch/rest/services/api/MapServer/identify?geometryType=esriGeometryPoint&geometry=" + data.northing + "," + data.easting + "&imageDisplay=0,0,0&mapExtent=0,0,0,0&tolerance=0&layers=all:ch.swisstopo.swissboundaries3d-gemeinde-flaeche.fill,ch.swisstopo-vd.ortschaftenverzeichnis_plz&returnGeometry=false"
+    var zipAPI = "https://api3.geo.admin.ch/rest/services/api/MapServer/identify?geometryType=esriGeometryPoint&geometry=" + data.easting + "," + data.northing + "&imageDisplay=0,0,0&mapExtent=0,0,0,0&tolerance=0&layers=all:ch.swisstopo.swissboundaries3d-gemeinde-flaeche.fill,ch.swisstopo-vd.ortschaftenverzeichnis_plz&returnGeometry=false"
 
     console.log(zipAPI)
 
-    // var zipRequest = HTTP.get(zipAPI)
+    var zipRequest = HTTP.get(zipAPI)
 
-    // if (zipRequest) {
-    //   console.log('Success: ZLP')
-    //   console.log('ZLP: ', {
-    //     data: zipRequest.data
-    //   })
-    //   // return zipRequest.data;
-    //   data.zlp = zipRequest.data
-    // } else {
-    //   throw new Meteor.Error('apt-connection-error', zipAPI)
-    // }
+    if (zipRequest) {
+      console.log('Success: ZLP')
+      console.log('ZLP: ', {
+        data: zipRequest.data
+      })
+      // return zipRequest.data;
+      data.zlp = zipRequest.data
+    } else {
+      throw new Meteor.Error('apt-connection-error', zipAPI)
+    }
 
 
 
@@ -105,6 +105,12 @@ Meteor.methods({
       }
     })
 
+
+
+    console.log("URLS:",{NECoordsAPI: url, zipAPI, zipAPI })
+
+    console.log({location: coordinates, results: data})
+    
     return data
 
     // I20200415-15:41:38.080(3)?   loc: { type: 'Point', coordinates: [ 8.5307, 47.3828 ] }
