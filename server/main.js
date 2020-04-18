@@ -46,6 +46,7 @@ Zips._ensureIndex({'loc':'2dsphere'});
 Meteor.methods({
   setLocation(coordinates) {
     console.log('coordinates', coordinates)
+    var data;
     // var ip = App.getIp(this)
     // console.log(ip)
     // var data = App.ipGeo(ip)
@@ -60,15 +61,30 @@ Meteor.methods({
    
    
     var x = HTTP.get(url);
-      if (x && (x.statusCode == 200)) {
+    if (x && (x.statusCode == 200)) {
         console.log('Success:')
-        console.log('http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting',x)
-          return x.data;
-      }else{
+        console.log('http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting',x.data)
+         data = x.data;
+    }else{
         throw new Meteor.Error('apt-connection-error',url)
-      }
+    }
+
+    
+
+    var zipAPI = "https://api3.geo.admin.ch/rest/services/api/MapServer/identify?geometryType=esriGeometryPoint&geometry="+data.easting+","+data.northing+"&imageDisplay=0,0,0&mapExtent=0,0,0,0&tolerance=0&layers=all:ch.swisstopo.swissboundaries3d-gemeinde-flaeche.fill,ch.swisstopo-vd.ortschaftenverzeichnis_plz&returnGeometry=false"
+    var zipRequest = HTTP.get(zipAPI)
+
+    if (zipRequest && (zipRequest.statusCode == 200)) {
+      console.log('Success: ZLP')
+      console.log('ZLP: ',{zipRequest})
+        // return zipRequest.data;
+  }else{
+      throw new Meteor.Error('apt-connection-error',zipAPI)
+  }
 
 
+
+  return data
 
     // I20200415-15:41:38.080(3)?   loc: { type: 'Point', coordinates: [ 8.5307, 47.3828 ] }
 
