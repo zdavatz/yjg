@@ -60,29 +60,30 @@ Meteor.methods({
     } else {
       throw new Meteor.Error('apt-connection-error', url)
     }
+    
+    // 
     var zipAPI = "https://api3.geo.admin.ch/rest/services/api/MapServer/identify?geometryType=esriGeometryPoint&geometry=" + data.easting + "," + data.northing + "&imageDisplay=0,0,0&mapExtent=0,0,0,0&tolerance=0&layers=all:ch.swisstopo.swissboundaries3d-gemeinde-flaeche.fill,ch.swisstopo-vd.ortschaftenverzeichnis_plz&returnGeometry=false"
     console.log("GETTING ZLP DATA: ", zipAPI)
-    // var zipRequest = HTTP.get(zipAPI)
-    // if (zipRequest) {
-    //   console.log('Success: ZLP')
-    //   console.log('ZLP: ', {
-    //     data: zipRequest.data
-    //   })
-    //   // return zipRequest.data;
-    //   data.zlp = zipRequest.data
-    // } else {
-    //   throw new Meteor.Error('apt-connection-error', zipAPI)
-    // }
-    HTTP.call('GET', zipAPI, {}, function (error, response) {
-      if (error) {
-        console.log('ZLP-API Request: ', error);
-      } else {
-        console.log('ZLP: ', {
-          data: response.data.results
-        })
-        data.zlp = response.data.results
-      }
-    })
+    var zipRequest = HTTP.get(zipAPI)
+    if (zipRequest) {
+      console.log('Success: ZLP')
+      console.log('ZLP: ', {
+        data: zipRequest.data
+      })
+      data.zlp = zipRequest.data
+    } else {
+      throw new Meteor.Error('apt-connection-error', zipAPI)
+    }
+    // HTTP.call('GET', zipAPI, {}, function (error, response) {
+    //   if (error) {
+    //     console.log('ZLP-API Request: ', error);
+    //   } else {
+    //     console.log('ZLP: ', {
+    //       data: response.data.results
+    //     })
+    //     data.zlp = response.data.results
+    //   }
+    // })
     console.log("URLS:",{NECoordsAPI: url, geoMapCoords: geoMAPCoordsAPI , zipAPI, zipAPI })
     console.log({location: coordinates, results: data})
     
