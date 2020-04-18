@@ -47,6 +47,7 @@ Meteor.methods({
       console.log('Success: geodesyGEO API:')
       console.log('http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting', x.data)
       data = x.data;
+      data.api = "geodesy-LV03"
     } else {
       throw new Meteor.Error('apt-connection-error', url)
     }
