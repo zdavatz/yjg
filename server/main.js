@@ -37,7 +37,7 @@ Meteor.methods({
       throw new Meteor.Error('setLocation-err', "Coordinates is missing")
     }
     var data;
-    
+    data.coordinates = coordinates;
     // var ip = App.getIp(this)
     // console.log(ip)
     // var data = App.ipGeo(ip)
@@ -57,7 +57,7 @@ Meteor.methods({
       throw new Meteor.Error('apt-connection-error', url)
     }
 
-    data.coordinates = coordinates;
+ 
     // USED for the map/ ZLP
     var geoMAPCoordsAPI = 'http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting=' + coordinates.lng + '&northing=' + coordinates.lat + "&format=json";
     var geoMapCoords = HTTP.get(geoMAPCoordsAPI);
