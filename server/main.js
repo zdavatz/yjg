@@ -60,10 +60,12 @@ Meteor.methods({
    
    
     var x = HTTP.get(url);
-      if (x && x.content) {
+      if (x && (x.statusCode == 200)) {
         console.log('Success:')
         console.log('http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting',x)
-          return x.content;
+          return x.data;
+      }else{
+        throw new Meteor.Error('apt-connection-error',url)
       }
 
 

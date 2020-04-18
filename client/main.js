@@ -26,7 +26,7 @@ Template.app.events({
       Meteor.call('setLocation',App.getSetting('position'),(err,data)=>{
         console.log(err,data)
         App.setSetting({ipData: JSON.stringify(data)})
-        App.setSetting({easting:data.coordinates[0], northing: data.coordinates[1]})
+        App.setSetting({easting:data.coordinates.easting, northing: data.coordinates.northing})
       })
     }
 
