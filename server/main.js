@@ -90,6 +90,7 @@ Meteor.methods({
     if(data.altitude){
       delete data.altitude
     }
+    data.coordinates = coordinates;
     return data
     // var s = Zips.find({
     //   loc: {
