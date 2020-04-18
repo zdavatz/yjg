@@ -84,7 +84,10 @@ Meteor.methods({
     })
     console.log("URLS:",{NECoordsAPI: url, geoMapCoords: geoMAPCoordsAPI , zipAPI, zipAPI })
     console.log({location: coordinates, results: data})
-    delete data.altitude
+    
+    if(data.altitude){
+      delete data.altitude
+    }
     return data
     // var s = Zips.find({
     //   loc: {
