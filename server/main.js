@@ -61,8 +61,8 @@ Meteor.methods({
    
     var x = HTTP.get(url);
       if (x) {
-        console.log(x)
-          return x;
+        console.log(x.data)
+          return x.data;
       }
 
 
@@ -150,6 +150,7 @@ function createRow(head, row) {
 /**
  * SSL
  */
+console.log('SSL Setting',Meteor.settings.isSSL)
 Meteor.startup(function () {
   if (Meteor.settings.isSSL) {
     const isProduction = process.env.NODE_ENV !== 'development';

@@ -25,6 +25,13 @@
           {{#if getSetting 'ipData'}}
           <br />
           <br />
+          
+
+          <a class="setLocation button is-rounded is-white is-large " href="https://map.geo.admin.ch/?selectedNode=node_ch.swisstopo.fixpunkte-lfp11&zoom=8&bgLayer=ch.swisstopo.pixelkarte-farbe&layers=ch.swisstopo.fixpunkte-hfp2,ch.swisstopo.fixpunkte-hfp1,ch.swisstopo.fixpunkte-lfp2,ch.swisstopo.fixpunkte-lfp1&time_current=latest&lang=de&topic=ech&E={{getSetting 'easting'}}2&N={{getSetting 'northing'}}">
+            Show on map
+          </a>
+
+          
           <p class="notification is-white is-clipped">
             <code>{{getSetting 'ipData'}}</code>
             {{#if getSetting 'position'}}
