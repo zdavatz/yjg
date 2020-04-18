@@ -37,7 +37,9 @@ require('dotenv').config();
 
 
 // Zips._dropIndex('loc.coordinates');
-Zips._ensureIndex({'loc':'2dsphere'}); 
+Zips._ensureIndex({
+  'loc': '2dsphere'
+});
 
 
 
@@ -57,37 +59,53 @@ Meteor.methods({
     // console.log(s)
 
 
-    var url =  'http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting='+coordinates.lng+'&northing='+ coordinates.lat+"&format=json";
-   
-   
+    var url = 'http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting=' + coordinates.lng + '&northing=' + coordinates.lat + "&format=json";
+
+
     var x = HTTP.get(url);
     if (x && (x.statusCode == 200)) {
-        console.log('Success:')
-        console.log('http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting',x.data)
-         data = x.data;
-    }else{
-        throw new Meteor.Error('apt-connection-error',url)
+      console.log('Success:')
+      console.log('http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting', x.data)
+      data = x.data;
+    } else {
+      throw new Meteor.Error('apt-connection-error', url)
     }
 
-    
+
 
     console.log('Coords API Updates', data)
 
-    var zipAPI = "https://api3.geo.admin.ch/rest/services/api/MapServer/identify?geometryType=esriGeometryPoint&geometry="+data.northing+","+data.easting+"&imageDisplay=0,0,0&mapExtent=0,0,0,0&tolerance=0&layers=all:ch.swisstopo.swissboundaries3d-gemeinde-flaeche.fill,ch.swisstopo-vd.ortschaftenverzeichnis_plz&returnGeometry=false"
-    var zipRequest = HTTP.get(zipAPI)
+    var zipAPI = "https://api3.geo.admin.ch/rest/services/api/MapServer/identify?geometryType=esriGeometryPoint&geometry=" + data.northing + "," + data.easting + "&imageDisplay=0,0,0&mapExtent=0,0,0,0&tolerance=0&layers=all:ch.swisstopo.swissboundaries3d-gemeinde-flaeche.fill,ch.swisstopo-vd.ortschaftenverzeichnis_plz&returnGeometry=false"
 
-    if (zipRequest) {
-      console.log('Success: ZLP')
-      console.log('ZLP: ',{data: zipRequest.data})
-        // return zipRequest.data;
-        data.zlp = zipRequest.data
-  }else{
-      throw new Meteor.Error('apt-connection-error',zipAPI)
-  }
+    console.log(zipAPI)
+
+    // var zipRequest = HTTP.get(zipAPI)
+
+    // if (zipRequest) {
+    //   console.log('Success: ZLP')
+    //   console.log('ZLP: ', {
+    //     data: zipRequest.data
+    //   })
+    //   // return zipRequest.data;
+    //   data.zlp = zipRequest.data
+    // } else {
+    //   throw new Meteor.Error('apt-connection-error', zipAPI)
+    // }
 
 
 
-  return data
+    HTTP.call('GET', zipAPI, {}, function (error, response) {
+      if (error) {
+        console.log('ZLP-API Request: ', error);
+      } else {
+        console.log('ZLP: ', {
+          data: response.data
+        })
+        data.zlp = response.data
+      }
+    })
+
+    return data
 
     // I20200415-15:41:38.080(3)?   loc: { type: 'Point', coordinates: [ 8.5307, 47.3828 ] }
 
@@ -129,13 +147,13 @@ Meteor.startup(() => {
   if (Zips.find().count() == 0) {
     var dataset = assesLib.readAssets('CH.txt', 'text')
     var head = ['country', 'zip', 'place', 'adminName1', 'adminCode1', 'adminName2', 'adminCode2', 'adminName3', 'adminCode3', 'latitude', 'longitude', 'accuracy']
-    console.log('Sample Code',dataset[0].split('\t'))
+    console.log('Sample Code', dataset[0].split('\t'))
     _.each(dataset, (row) => {
       var col = createRow(head, row.split('\t'))
 
       col.loc = {
         "type": "Point",
-        "coordinates": [         
+        "coordinates": [
           parseFloat(col.longitude),
           parseFloat(col.latitude)
         ]
@@ -172,7 +190,7 @@ function createRow(head, row) {
 /**
  * SSL
  */
-console.log('SSL Setting',Meteor.settings.isSSL)
+console.log('SSL Setting', Meteor.settings.isSSL)
 Meteor.startup(function () {
   if (Meteor.settings.isSSL) {
     const isProduction = process.env.NODE_ENV !== 'development';
