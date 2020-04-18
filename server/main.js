@@ -74,18 +74,18 @@ Meteor.methods({
 
 
 
-    // USED for the map
-    var geoMAPCoordsAPI = 'http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting=' + coordinates.lng + '&northing=' + coordinates.lat + "&format=json";
+    // USED for the map/ ZLP
+    // var geoMAPCoordsAPI = 'http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting=' + coordinates.lng + '&northing=' + coordinates.lat + "&format=json";
 
-    var geoMapCoords = HTTP.get(geoMAPCoordsAPI);
-    if (geoMapCoords && (geoMapCoords.statusCode == 200)) {
+    // var geoMapCoords = HTTP.get(geoMAPCoordsAPI);
+    // if (geoMapCoords && (geoMapCoords.statusCode == 200)) {
 
-      data.geoMapCoords = geoMapCoords.data;
+    //   data.geoMapCoords = geoMapCoords.data;
 
-      console.log("Success: geoMAPCoordsAPI",{url:geoMapCoords, geoMapData: geoMapCoords.data})
-    } else {
-      throw new Meteor.Error('apt-connection-error', url)
-    }
+    //   console.log("Success: geoMAPCoordsAPI",{url:geoMapCoords, geoMapData: geoMapCoords.data})
+    // } else {
+    //   throw new Meteor.Error('apt-connection-error', url)
+    // }
 
 
     
@@ -122,7 +122,7 @@ Meteor.methods({
 
 
 
-    console.log("URLS:",{NECoordsAPI: url, geoMapCoords: geoMAPCoordsAPI , zipAPI, zipAPI })
+    console.log("URLS:",{NECoordsAPI: url, geoMapCoords: "geoMAPCoordsAPI" , zipAPI, zipAPI })
 
     console.log({location: coordinates, results: data})
     
