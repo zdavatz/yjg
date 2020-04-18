@@ -1,18 +1,11 @@
 import {
   Meteor
 } from 'meteor/meteor';
-
 import assesLib from './_assets.js'
 import App from './ip_agent.js'
 import _ from 'lodash'
-
-
 import '../lib/col.js';
-
 require('dotenv').config();
-
-
-
 // if (!Meteor.settings.locationiqComId) {
 //   console.log("ERROR: locationiq_Com_Id token is not set, please add the token from https://locationiq.com  to your settings.json file")
 //   throw new Meteor.Error('key-missing', "ERROR: locationiq_Com_Id key is not set, please add the token from https://locationiq.com  to your settings.json file")
@@ -21,7 +14,6 @@ require('dotenv').config();
 //   console.log("Key: ", Meteor.settings.locationiqComId)
 //   var locationiqComId = Meteor.settings.locationiqComId
 // }
-
 // country code      : iso country code, 2 characters
 // postal code       : varchar(20)
 // place name        : varchar(180)
@@ -34,34 +26,21 @@ require('dotenv').config();
 // latitude          : estimated latitude (wgs84)
 // longitude         : estimated longitude (wgs84)
 // accuracy          : accuracy of lat/lng from 1=estimated, 4=geonameid, 6=centroid of addresses or shape
-
-
 // Zips._dropIndex('loc.coordinates');
 Zips._ensureIndex({
   'loc': '2dsphere'
 });
-
-
-
-
-
 Meteor.methods({
   setLocation(coordinates) {
-   
     var data;
     // var ip = App.getIp(this)
     // console.log(ip)
     // var data = App.ipGeo(ip)
     // console.log(data)
-
     // var s = HTTP.get('https://api3.geo.admin.ch/rest/services/api/MapServer/identify?geometryType=esriGeometryPoint&geometry='+ coordinates.lng +","+ coordinates.lat +'&imageDisplay=0,0,0&mapExtent=0,0,0,0&tolerance=0&layers=all:ch.swisstopo.swissboundaries3d-gemeinde-flaeche.fill,ch.swisstopo-vd.ortschaftenverzeichnis_plz&returnGeometry=false')
     // var old = 'https://eu1.locationiq.com/v1/reverse.php?key='+locationiqComId+'&lat='+coordinates.lat+'&lon='+coordinates.lng+'&format=json'
     // console.log(s)
-
-
-   
     // USED for ZLP
-
     var url = "http://geodesy.geo.admin.ch/reframe/wgs84tolv03?easting="+coordinates.lng+"&northing="+coordinates.lat+"&altitude=550.0%20&format=json"
     var x = HTTP.get(url);
     if (x && (x.statusCode == 200)) {
@@ -71,65 +50,41 @@ Meteor.methods({
     } else {
       throw new Meteor.Error('apt-connection-error', url)
     }
-
-
-
     // USED for the map/ ZLP
-    // var geoMAPCoordsAPI = 'http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting=' + coordinates.lng + '&northing=' + coordinates.lat + "&format=json";
-
-    // var geoMapCoords = HTTP.get(geoMAPCoordsAPI);
-    // if (geoMapCoords && (geoMapCoords.statusCode == 200)) {
-
-    //   data.geoMapCoords = geoMapCoords.data;
-
-    //   console.log("Success: geoMAPCoordsAPI",{url:geoMapCoords, geoMapData: geoMapCoords.data})
-    // } else {
-    //   throw new Meteor.Error('apt-connection-error', url)
-    // }
-
-
-    
-
-    var zipAPI = "https://api3.geo.admin.ch/rest/services/api/MapServer/identify?geometryType=esriGeometryPoint&geometry=" + data.easting + "," + data.northing + "&imageDisplay=0,0,0&mapExtent=0,0,0,0&tolerance=0&layers=all:ch.swisstopo.swissboundaries3d-gemeinde-flaeche.fill,ch.swisstopo-vd.ortschaftenverzeichnis_plz&returnGeometry=false"
-
-    console.log("GETTING ZLP DATA: ", zipAPI)
-
-    var zipRequest = HTTP.get(zipAPI)
-
-    if (zipRequest) {
-      console.log('Success: ZLP')
-      console.log('ZLP: ', {
-        data: zipRequest.data
-      })
-      // return zipRequest.data;
-      data.zlp = zipRequest.data
+    var geoMAPCoordsAPI = 'http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting=' + coordinates.lng + '&northing=' + coordinates.lat + "&format=json";
+    var geoMapCoords = HTTP.get(geoMAPCoordsAPI);
+    if (geoMapCoords && (geoMapCoords.statusCode == 200)) {
+      data.geoMapCoords = geoMapCoords.data;
+      console.log("Success: geoMAPCoordsAPI",{url:geoMapCoords, geoMapData: geoMapCoords.data})
     } else {
-      throw new Meteor.Error('apt-connection-error', zipAPI)
+      throw new Meteor.Error('apt-connection-error', url)
     }
-
-
-
+    var zipAPI = "https://api3.geo.admin.ch/rest/services/api/MapServer/identify?geometryType=esriGeometryPoint&geometry=" + data.easting + "," + data.northing + "&imageDisplay=0,0,0&mapExtent=0,0,0,0&tolerance=0&layers=all:ch.swisstopo.swissboundaries3d-gemeinde-flaeche.fill,ch.swisstopo-vd.ortschaftenverzeichnis_plz&returnGeometry=false"
+    console.log("GETTING ZLP DATA: ", zipAPI)
+    // var zipRequest = HTTP.get(zipAPI)
+    // if (zipRequest) {
+    //   console.log('Success: ZLP')
+    //   console.log('ZLP: ', {
+    //     data: zipRequest.data
+    //   })
+    //   // return zipRequest.data;
+    //   data.zlp = zipRequest.data
+    // } else {
+    //   throw new Meteor.Error('apt-connection-error', zipAPI)
+    // }
     HTTP.call('GET', zipAPI, {}, function (error, response) {
       if (error) {
         console.log('ZLP-API Request: ', error);
       } else {
         console.log('ZLP: ', {
-          data: response.data
+          data: response.data.results
         })
-        data.zlp = response.data
+        data.zlp = response.data.results
       }
     })
-
-
-
-    console.log("URLS:",{NECoordsAPI: url, geoMapCoords: "geoMAPCoordsAPI" , zipAPI, zipAPI })
-
+    console.log("URLS:",{NECoordsAPI: url, geoMapCoords: geoMAPCoordsAPI , zipAPI, zipAPI })
     console.log({location: coordinates, results: data})
-    
     return data
-
-    // I20200415-15:41:38.080(3)?   loc: { type: 'Point', coordinates: [ 8.5307, 47.3828 ] }
-
     // var s = Zips.find({
     //   loc: {
     //     $near: {
@@ -140,14 +95,10 @@ Meteor.methods({
     //     }
     // }
     // }).fetch();
-
     // console.log(s.length, s[0])
     // return s
   }
 })
-
-
-
 // var s = Zips.find({
 //   loc: {
 //     $near: {
@@ -157,12 +108,8 @@ Meteor.methods({
 //     }
 // }
 // }).fetch();
-
 // console.log(s.length, s[0])
-
-
 //
-
 // Zips.remove({})
 Meteor.startup(() => {
   if (Zips.find().count() == 0) {
@@ -171,7 +118,6 @@ Meteor.startup(() => {
     console.log('Sample Code', dataset[0].split('\t'))
     _.each(dataset, (row) => {
       var col = createRow(head, row.split('\t'))
-
       col.loc = {
         "type": "Point",
         "coordinates": [
@@ -185,29 +131,23 @@ Meteor.startup(() => {
     console.log("ZipCode Database: Inserted and ready")
   }
   console.log('ZipCode Database is ready')
-
 });
 /** Convert rows into obj Collection */
 function createRow(head, row) {
   var o = {}
   _.map(head, (i, k) => {
-
     o[i] = row[k]
-
   })
-
   // console.log(o)
   return o
 }
 /** */
-
 // function getCorrData(){ 
 //   var x = HTTP.get('https://eu1.locationiq.com/v1/reverse.php?key=YOUR_PRIVATE_TOKEN&lat=LATITUDE&lon=LONGITUDE&format=json' + ip + '.json');
 //   if (x && x.data) {
 //       return x.data;
 //   }
 // }
-
 /**
  * SSL
  */
@@ -233,7 +173,6 @@ Meteor.startup(function () {
             xfwd: true,
           })
           .listen(port);
-
         proxy.on('error', err => {
           console.log(`HTTP-PROXY NPM MODULE ERROR: ${err}`);
         });
