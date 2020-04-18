@@ -80,6 +80,7 @@ Meteor.methods({
       console.log('Success: ZLP')
       console.log('ZLP: ',{data: zipRequest.data})
         // return zipRequest.data;
+        data.zlp = zipRequest.data
   }else{
       throw new Meteor.Error('apt-connection-error',zipAPI)
   }
