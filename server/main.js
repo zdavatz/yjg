@@ -60,9 +60,10 @@ Meteor.methods({
    
    
     var x = HTTP.get(url);
-      if (x) {
+      if (x && x.content) {
+        console.log('Success:')
         console.log('http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting',x)
-          return x;
+          return x.content;
       }
 
 
