@@ -56,7 +56,7 @@ Meteor.methods({
     // console.log(s)
 
 
-    var url =  'http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting='+coordinates.lng+'&northing='+ coordinates.lat
+    var url =  'http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting='+coordinates.lng+'&northing='+ coordinates.lat+"&format=json";
    
    
     var x = HTTP.get(url);
