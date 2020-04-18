@@ -79,9 +79,9 @@ Meteor.methods({
 
     var geoMapCoords = HTTP.get(geoMAPCoordsAPI);
     if (geoMapCoords && (geoMapCoords.statusCode == 200)) {
-      console.log('Success:')
-      console.log({url:geoMapCoords, geoMapData: geo.data})
+      console.log('Success:')      
       data.geoMapCoords = geo.data;
+      console.log({url:geoMapCoords, geoMapData: geo.data})
     } else {
       throw new Meteor.Error('apt-connection-error', url)
     }
