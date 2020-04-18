@@ -61,8 +61,8 @@ Meteor.methods({
    
     var x = HTTP.get(url);
       if (x) {
-        console.log(x.data)
-          return x.data;
+        console.log('http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting',x)
+          return x;
       }
 
 
