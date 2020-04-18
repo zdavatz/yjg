@@ -74,7 +74,7 @@ Meteor.methods({
     var zipAPI = "https://api3.geo.admin.ch/rest/services/api/MapServer/identify?geometryType=esriGeometryPoint&geometry="+data.easting+","+data.northing+"&imageDisplay=0,0,0&mapExtent=0,0,0,0&tolerance=0&layers=all:ch.swisstopo.swissboundaries3d-gemeinde-flaeche.fill,ch.swisstopo-vd.ortschaftenverzeichnis_plz&returnGeometry=false"
     var zipRequest = HTTP.get(zipAPI)
 
-    if (zipRequest && (zipRequest.statusCode == 200)) {
+    if (zipRequest) {
       console.log('Success: ZLP')
       console.log('ZLP: ',{zipRequest})
         // return zipRequest.data;
