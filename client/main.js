@@ -13,10 +13,22 @@ Tracker.autorun(() => {
 /* -------------------------------------------------------------------------- */
 Template.app.events({
   'click .setLocation': (e)=>{
-    e.preventDefault()
-    if(App.getSetting('position')){
-      Meteor.call('setLocation',App.getSetting('position'),(err,data)=>{
+    // e.preventDefault()
+    var status = $(e.currentTarget).attr('status')
+    console.log("status", status)
+    var data = App.getSetting('position')
+    if(data){
+      data.status = status;
+      if(status == 'positiv'){
+        data.positiv = true
+      }
+      console.log("Data", data)
+      Meteor.call('setLocation',data,(err,data)=>{
         console.log(err,data)
+        if(err){
+          alert('Error:Server connection Error')
+          return
+        }
         App.setSetting({ipData: JSON.stringify(data, undefined, 2)})
         App.setSetting({easting:data.easting, northing: data.northing})
       })

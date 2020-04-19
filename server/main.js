@@ -33,15 +33,13 @@ Zips._ensureIndex({
 Meteor.methods({
   setLocation(coordinates) {
 
+    
+
     if(!coordinates){
       throw new Meteor.Error('setLocation-err', "Coordinates is missing")
     }
     var data;
-    
-    // var ip = App.getIp(this)
-    // console.log(ip)
-    // var data = App.ipGeo(ip)
-    // console.log(data)
+
     //
     var url = "http://geodesy.geo.admin.ch/reframe/wgs84tolv03?easting="+coordinates.lng+"&northing="+coordinates.lat+"&altitude=550.0%20&format=json"
     var x = HTTP.get(url);
@@ -86,34 +84,23 @@ Meteor.methods({
     if(data.altitude){
       delete data.altitude
     }
+
+
+    
+    var dataReady = coordinates;
+    data.conenctionId = this.connection.id
+    dataReady.ip = App.getIp(this)
+    dataReady.createdAt = new Date();
+    var dataReady = _.assign(dataReady, data)
+
+    // Items.insert(dataReady)
     
     return data
-    // var s = Zips.find({
-    //   loc: {
-    //     $near: {
-    //         $geometry:
-    //             { type: "Point", coordinates: [8.5307, 47.3828] }, 
-    //             // { type: "Point", coordinates: [coordinates.lng, coordinates.lat] }, 
-    //             $minDistance: 10
-    //     }
-    // }
-    // }).fetch();
-    // console.log(s.length, s[0])
-    // return s
+
   }
 })
-// var s = Zips.find({
-//   loc: {
-//     $near: {
-//         $geometry:
-//             { type: "Point", coordinates: [2825350.91586853,  1166527.3365577655] }, 
-//             // { type: "Point", coordinates: [coordinates.lng, coordinates.lat] }, 
-//     }
-// }
-// }).fetch();
-// console.log(s.length, s[0])
-//
-// Zips.remove({})
+/* -------------------------------------------------------------------------- */
+
 Meteor.startup(() => {
   if (Zips.find().count() == 0) {
     var dataset = assesLib.readAssets('CH.txt', 'text')
