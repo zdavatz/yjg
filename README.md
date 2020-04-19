@@ -1,5 +1,4 @@
-# yjg
-ywesee javascript geolocation
+# yjg - ywesee javascript geolocation
 
 1. Show button in HTML page.
 2. Show Option for user to enter Username.
