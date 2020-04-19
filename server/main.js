@@ -42,10 +42,7 @@ Meteor.methods({
     // console.log(ip)
     // var data = App.ipGeo(ip)
     // console.log(data)
-    // var s = HTTP.get('https://api3.geo.admin.ch/rest/services/api/MapServer/identify?geometryType=esriGeometryPoint&geometry='+ coordinates.lng +","+ coordinates.lat +'&imageDisplay=0,0,0&mapExtent=0,0,0,0&tolerance=0&layers=all:ch.swisstopo.swissboundaries3d-gemeinde-flaeche.fill,ch.swisstopo-vd.ortschaftenverzeichnis_plz&returnGeometry=false')
-    // var old = 'https://eu1.locationiq.com/v1/reverse.php?key='+locationiqComId+'&lat='+coordinates.lat+'&lon='+coordinates.lng+'&format=json'
-    // console.log(s)
-    // USED for ZLP
+    //
     var url = "http://geodesy.geo.admin.ch/reframe/wgs84tolv03?easting="+coordinates.lng+"&northing="+coordinates.lat+"&altitude=550.0%20&format=json"
     var x = HTTP.get(url);
     if (x && (x.statusCode == 200)) {
@@ -56,10 +53,10 @@ Meteor.methods({
     } else {
       throw new Meteor.Error('apt-connection-error', url)
     }
-
+    // SETTING THE VALUE
     data.long = coordinates.lng;
     data.lat = coordinates.lat;
-    // USED for the map/ ZLP
+    // NOT USED
     var geoMAPCoordsAPI = 'http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting=' + coordinates.lng + '&northing=' + coordinates.lat + "&format=json";
     var geoMapCoords = HTTP.get(geoMAPCoordsAPI);
     if (geoMapCoords && (geoMapCoords.statusCode == 200)) {
@@ -69,7 +66,7 @@ Meteor.methods({
       throw new Meteor.Error('apt-connection-error', url)
     }
     
-    // 
+    // ZipCode "ZLP"
     var zipAPI = "https://api3.geo.admin.ch/rest/services/api/MapServer/identify?geometryType=esriGeometryPoint&geometry=" + data.easting + "," + data.northing + "&imageDisplay=0,0,0&mapExtent=0,0,0,0&tolerance=0&layers=all:ch.swisstopo.swissboundaries3d-gemeinde-flaeche.fill,ch.swisstopo-vd.ortschaftenverzeichnis_plz&returnGeometry=false"
     console.log("GETTING ZLP DATA: ", zipAPI)
     var zipRequest = HTTP.get(zipAPI)
@@ -82,16 +79,7 @@ Meteor.methods({
     } else {
       throw new Meteor.Error('apt-connection-error', zipAPI)
     }
-    // HTTP.call('GET', zipAPI, {}, function (error, response) {
-    //   if (error) {
-    //     console.log('ZLP-API Request: ', error);
-    //   } else {
-    //     console.log('ZLP: ', {
-    //       data: response.data.results
-    //     })
-    //     data.zlp = response.data.results
-    //   }
-    // })
+
     console.log("URLS:",{NECoordsAPI: url, geoMapCoords: geoMAPCoordsAPI , zipAPI, zipAPI })
     console.log({location: coordinates, results: data})
     

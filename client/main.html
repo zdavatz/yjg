@@ -7,36 +7,45 @@
   {{>app}}
 </body>
 <template name="app">
-  <div class="hero is-fullheight is-primary">
-    <div class="hero-content">
+  <div class="hero is-fullheight is-{{getSetting 'bg'}}">
+    <div class="hero-body">
       <div class="columns is-multiline is-centered">
-        <div class="column is-4">
+        <div class="column is-4 has-text-center">
           <!--  -->
-          <br />
-          <br />
-          <br />
-          <a class="setLocation button is-rounded is-white is-large " href="#">
+          <a class="setLocation button is-rounded is-dark is-large" href="#">
             Set your location
           </a>
-<!--          
-          <hr/>
+          {{getSetting 'positiv'}}
+          <!--    
           {{getSetting 'msg'}}
           <br/> -->
           {{#if getSetting 'ipData'}}
           <br />
-
-          <!-- 
-            href="https://map.geo.admin.ch/?selectedNode=node_ch.swisstopo.fixpunkte-lfp11&zoom=8&bgLayer=ch.swisstopo.pixelkarte-farbe&layers=ch.swisstopo.fixpunkte-hfp2,ch.swisstopo.fixpunkte-hfp1,ch.swisstopo.fixpunkte-lfp2,ch.swisstopo.fixpunkte-lfp1&time_current=latest&lang=de&topic=ech&E={{getSetting 'easting'}}&N={{getSetting 'northing'}}"
-           -->
-
-          <a class="button is-rounded is-white is-large"
-          target="_blank"
-           href="https://map.geo.admin.ch/?selectedNode=node_ch.swisstopo.fixpunkte-lfp11&zoom=8&bgLayer=ch.swisstopo.pixelkarte-farbe&layers=ch.swisstopo.fixpunkte-hfp2,ch.swisstopo.fixpunkte-hfp1,ch.swisstopo.fixpunkte-lfp2,ch.swisstopo.fixpunkte-lfp1&time_current=latest&lang=de&topic=ech&E={{getSetting 'easting'}}&N={{getSetting 'northing'}}&crosshair=marker&layers_opacity=1,1,1,0.8">
+          <nav class="level is-mobile">
+            <div class="level-item has-text-centered">
+              <a class="button is-rounded is-success is-large setSettings"
+                data-settings="bg:primary,positiv:f,setLocation:t" href="#">
+                Covid19 negativ
+              </a>
+            </div>
+            <div class="level-item has-text-centered">
+              <a class=" button is-rounded is-danger is-outlined is-large setSettings"
+                data-settings="bg:danger,positiv:t,setLocation:t" href="#">
+                Covid19 positiv
+              </a>
+            </div>
+          </nav>
+          <!-- MAP -->
+          <p>
+            <br/>
+            <a class="button is-rounded is-white is-large" target="_blank"
+            href="https://map.geo.admin.ch/?selectedNode=node_ch.swisstopo.fixpunkte-lfp11&zoom=8&bgLayer=ch.swisstopo.pixelkarte-farbe&layers=ch.swisstopo.fixpunkte-hfp2,ch.swisstopo.fixpunkte-hfp1,ch.swisstopo.fixpunkte-lfp2,ch.swisstopo.fixpunkte-lfp1&time_current=latest&lang=de&topic=ech&E={{getSetting 'easting'}}&N={{getSetting 'northing'}}&crosshair=marker&layers_opacity=1,1,1,0.8">
             Show on map
-          </a>
+             </a>
+          </p>
 
-          <br/>
-          
+          <!-- DATA -->
+          <br />
           <p class="box has-text-left">
             <pre id="json">{{getSetting 'ipData'}}</pre>
             <!-- {{#if getSetting 'position'}}
