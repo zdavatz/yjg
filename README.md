@@ -1,5 +1,4 @@
 # yjg - ywesee javascript geolocation
-
 1. Show button in HTML page.
 2. Show Option for user to enter Username.
 3. Click the button and grab long/lat with [this library](https://github.com/trekhleb/use-position).
@@ -9,8 +8,7 @@
 7. If the Geolocation changes more then 100 meters, the user can save his location again.
 8. Translate GPS coordinates into PLZ and Streetname.
 
-## Configure
-
+## optional: configure locationiq.com
 Get the map token from https://locationiq.com
 - copy settings.example.json to settings.json
 - add the token
