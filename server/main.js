@@ -92,8 +92,10 @@ Meteor.methods({
     dataReady.ip = App.getIp(this)
     dataReady.createdAt = new Date();
     var dataReady = _.assign(dataReady, data)
-
-    // Items.insert(dataReady)
+    console.log("++++ INSERTING IN DATABSE +++++")
+    console.log({dataReady})
+    Items.insert(dataReady)
+    console.log("SUCCESS: DB Recoding Complete")
     
     return data
 
