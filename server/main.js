@@ -6,40 +6,28 @@ import App from './ip_agent.js'
 import _ from 'lodash'
 import '../lib/col.js';
 require('dotenv').config();
-// if (!Meteor.settings.locationiqComId) {
-//   console.log("ERROR: locationiq_Com_Id token is not set, please add the token from https://locationiq.com  to your settings.json file")
-//   throw new Meteor.Error('key-missing', "ERROR: locationiq_Com_Id key is not set, please add the token from https://locationiq.com  to your settings.json file")
-//   return
-// }else{
-//   console.log("Key: ", Meteor.settings.locationiqComId)
-//   var locationiqComId = Meteor.settings.locationiqComId
-// }
-// country code      : iso country code, 2 characters
-// postal code       : varchar(20)
-// place name        : varchar(180)
-// admin name1       : 1. order subdivision (state) varchar(100)
-// admin code1       : 1. order subdivision (state) varchar(20)
-// admin name2       : 2. order subdivision (county/province) varchar(100)
-// admin code2       : 2. order subdivision (county/province) varchar(20)
-// admin name3       : 3. order subdivision (community) varchar(100)
-// admin code3       : 3. order subdivision (community) varchar(20)
-// latitude          : estimated latitude (wgs84)
-// longitude         : estimated longitude (wgs84)
-// accuracy          : accuracy of lat/lng from 1=estimated, 4=geonameid, 6=centroid of addresses or shape
-// Zips._dropIndex('loc.coordinates');
-Zips._ensureIndex({
-  'loc': '2dsphere'
-});
+/* -------------------------------------------------------------------------- */
+function setBrowserId(){
+  var browserId = Random.id()
+  var isExists = Items.findOne({browserId:browserId})
+  if(isExists){
+    setBrowserId()
+  }else{
+    return browserId
+  }
+}
+/* -------------------------------------------------------------------------- */
 Meteor.methods({
+  setBrowserId(){
+    var browserId = setBrowserId()
+    console.log('Setting Browser Id')
+    return browserId
+  },
   setLocation(coordinates) {
-
-    
-
     if(!coordinates){
       throw new Meteor.Error('setLocation-err', "Coordinates is missing")
     }
     var data;
-
     //
     var url = "http://geodesy.geo.admin.ch/reframe/wgs84tolv03?easting="+coordinates.lng+"&northing="+coordinates.lat+"&altitude=550.0%20&format=json"
     var x = HTTP.get(url);
@@ -58,12 +46,10 @@ Meteor.methods({
     var geoMAPCoordsAPI = 'http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting=' + coordinates.lng + '&northing=' + coordinates.lat + "&format=json";
     var geoMapCoords = HTTP.get(geoMAPCoordsAPI);
     if (geoMapCoords && (geoMapCoords.statusCode == 200)) {
-      // data.geoMapCoords = geoMapCoords.data;
       console.log("Success: geoMAPCoordsAPI",{url:geoMapCoords, geoMapData: geoMapCoords.data})
     } else {
       throw new Meteor.Error('apt-connection-error', url)
     }
-    
     // ZipCode "ZLP"
     var zipAPI = "https://api3.geo.admin.ch/rest/services/api/MapServer/identify?geometryType=esriGeometryPoint&geometry=" + data.easting + "," + data.northing + "&imageDisplay=0,0,0&mapExtent=0,0,0,0&tolerance=0&layers=all:ch.swisstopo.swissboundaries3d-gemeinde-flaeche.fill,ch.swisstopo-vd.ortschaftenverzeichnis_plz&returnGeometry=false"
     console.log("GETTING ZLP DATA: ", zipAPI)
@@ -77,16 +63,11 @@ Meteor.methods({
     } else {
       throw new Meteor.Error('apt-connection-error', zipAPI)
     }
-
     console.log("URLS:",{NECoordsAPI: url, geoMapCoords: geoMAPCoordsAPI , zipAPI, zipAPI })
     console.log({location: coordinates, results: data})
-    
     if(data.altitude){
       delete data.altitude
     }
-
-
-    
     var dataReady = coordinates;
     data.conenctionId = this.connection.id
     dataReady.ip = App.getIp(this)
@@ -96,13 +77,10 @@ Meteor.methods({
     console.log({dataReady})
     Items.insert(dataReady)
     console.log("SUCCESS: DB Recoding Complete")
-    
     return data
-
   }
 })
-/* -------------------------------------------------------------------------- */
-
+/* --------------------------------------Dropped------------------------------------ */
 Meteor.startup(() => {
   if (Zips.find().count() == 0) {
     var dataset = assesLib.readAssets('CH.txt', 'text')

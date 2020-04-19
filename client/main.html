@@ -3,17 +3,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="generator" content="Medevel.com" />
 </head>
-
 <body>
   {{>app}}
 </body>
 <template name="app">
   <div class="hero is-fullheight is-{{getSetting 'bg'}}">
-
     <div class="columns is-multiline is-centered">
       <div class="column is-12 has-text-center is-centered">
-
         <!-- {{#unless getSetting 'ipData'}} -->
+        <br/>
         <br/>
         <br/>
         <div class="columns is-multiline is-mobile">
@@ -23,7 +21,6 @@
               Covid19 negativ
             </a>
           </div>
-
           <div class="column is-6">
             <a class="setLocation button is-rounded is-danger is-outlined is-largex setSettings"
               data-settings="bg:danger,positiv:t,setLocation:t" status="positiv" href="#">
@@ -31,22 +28,13 @@
             </a>
           </div>
         </div>
-        <!-- {{unless}} -->
-
-
-
-
-
-
-
 
         <!-- {{getSetting 'positiv'}} -->
-        <!--    
-          {{getSetting 'msg'}}
-          <br/> -->
+        <!-- {{getSetting 'msg'}} -->
+        
         {{#if getSetting 'ipData'}}
+        <br/>
         <br />
-
         <!-- MAP -->
         <p>
           <br />
@@ -55,7 +43,6 @@
             Show on map
           </a>
         </p>
-
         <!-- DATA -->
         <br />
         <p class="box has-text-left">
