@@ -28,8 +28,10 @@ settings.json
 
  $ meteor --settings settings.json
 
-// with SSL support
+// with SSL support for localhost testing and selfsigned cert
  $ meteor --settings settings.json --port 3100
+// without SSL support or with Apache SSL support compiled in
+ $ meteor --settings settings.json --port 3000
 
  ```
 ## Digital Ocean Deployment
