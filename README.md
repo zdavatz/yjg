@@ -32,3 +32,31 @@ settings.json
  $ meteor --settings settings.json --port 3100
 
  ```
+## Digital Ocean Deployment
+### Apache Setup
+```
+~$ cat /etc/apache2/sites-enabled/yjg.conf
+<VirtualHost *:80>
+  ServerName covgeo.ch
+  Redirect permanent / https://covgeo.ch
+</VirtualHost>
+
+<VirtualHost 165.22.16.219:443>
+  ServerName covgeo.ch
+  ProxyPreserveHost On
+  ProxyPass  /excluded !
+  ProxyPass / http://127.0.0.1:3000/
+  ProxyPassReverse / http://127.0.0.1:3000/
+  SSLEngine on
+  SSLCertificateFile /etc/letsencrypt/live/covgeo.ch/cert.pem
+  SSLCertificateKeyFile /etc/letsencrypt/live/covgeo.ch/privkey.pem
+  SSLCertificateChainFile /etc/letsencrypt/live/covgeo.ch/chain.pem
+</VirtualHost>
+```
+### Letsencrypt Setup
+```
+./certbot-auto certonly --server https://acme-v02.api.letsencrypt.org/directory --manual --preferred-challenges dns -d '*.covgeo.ch'  -d covgeo.ch
+````
+
+### acme TXT Record setup
+1. Test acme Setup `dig -t TXT _acme-challenge.covgeo.ch`
