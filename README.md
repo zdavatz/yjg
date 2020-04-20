@@ -65,7 +65,7 @@ a2enmod proxy_balancer
 a2enmod proxy_connect
 a2enmod proxy_html
 a2enmod proxy
-sudo a2enmod ssl
+a2enmod ssl
 ```
 ### Letsencrypt Setup
 ```
