@@ -59,4 +59,5 @@ settings.json
 ````
 
 ### acme TXT Record setup
-1. Test acme Setup `dig -t TXT _acme-challenge.covgeo.ch`
+1. [Set acme Domain TXT records](https://user-images.githubusercontent.com/4953/79723589-51854980-82e6-11ea-8dfc-4f0efe4b6d3c.png)
+2. Test acme Setup `dig -t TXT _acme-challenge.covgeo.ch`
