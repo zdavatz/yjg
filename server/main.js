@@ -157,6 +157,7 @@ function saveFile() {
   var date = formatDate(new Date())
   console.log("Setting File Date: ", date)
   var file = 'covgeo_export_' + date + ".csv"
+  var file = "covgeo_export_daily_7am.csv"
   console.log("Setting File name", file)
   console.log("Reading the data.......")
   var items = Items.find().fetch()
