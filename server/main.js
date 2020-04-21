@@ -161,6 +161,11 @@ function saveFile() {
   console.log("Setting File name", file)
   console.log("Reading the data.......")
   var items = Items.find().fetch()
+  var items = _.map(items,(item)=>{
+    var item = item;
+    item.zip = JSON.stringify(item.zip)
+    return item
+  })
   var csv = Papa.unparse(items)
   console.log("Writing Data: Items", items.length)
   fs.writeFileSync(publicPath + file, csv, (err) => {
