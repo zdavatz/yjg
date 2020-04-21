@@ -1,35 +1,53 @@
 import {
   Meteor
 } from 'meteor/meteor';
+const fs = require('fs')
+const path = require('path');
+import _ from 'lodash'
+import Papa from 'papaparse';
+/* -------------------------------------------------------------------------- */
 import assesLib from './_assets.js'
 import App from './ip_agent.js'
-import _ from 'lodash'
 import '../lib/col.js';
+/* -------------------------------------------------------------------------- */
+console.log('Loading configuration')
 require('dotenv').config();
 /* -------------------------------------------------------------------------- */
-function setBrowserId(){
-  var browserId = Random.id()
-  var isExists = Items.findOne({browserId:browserId})
-  if(isExists){
-    setBrowserId()
-  }else{
-    return browserId
-  }
-}
+
+let currentFile;
+meteorPath = process.env['METEOR_SHELL_DIR'] + '/../../../'
+publicPath = process.env['METEOR_SHELL_DIR'] + '/../../../public/';
+
+/* -------------------------------------------------------------------------- */
+
+Meteor.startup(() => {
+  setZipCode()
+});
+
+
 /* -------------------------------------------------------------------------- */
 Meteor.methods({
+  getStats(){
+    console.log('Getting Stats:')
+    var r =  {
+      checkedAt : new Date(),
+      items: Items.find().count() 
+    }
+    console.log(r)
+    return r;
+  },
   setBrowserId(){
     var browserId = setBrowserId()
     console.log('Setting Browser Id')
     return browserId
   },
   setLocation(coordinates) {
-    if(!coordinates){
+    if (!coordinates) {
       throw new Meteor.Error('setLocation-err', "Coordinates is missing")
     }
     var data;
     //
-    var url = "http://geodesy.geo.admin.ch/reframe/wgs84tolv03?easting="+coordinates.lng+"&northing="+coordinates.lat+"&altitude=550.0%20&format=json"
+    var url = "http://geodesy.geo.admin.ch/reframe/wgs84tolv03?easting=" + coordinates.lng + "&northing=" + coordinates.lat + "&altitude=550.0%20&format=json"
     var x = HTTP.get(url);
     if (x && (x.statusCode == 200)) {
       console.log('Success: geodesyGEO API:')
@@ -46,7 +64,10 @@ Meteor.methods({
     var geoMAPCoordsAPI = 'http://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting=' + coordinates.lng + '&northing=' + coordinates.lat + "&format=json";
     var geoMapCoords = HTTP.get(geoMAPCoordsAPI);
     if (geoMapCoords && (geoMapCoords.statusCode == 200)) {
-      console.log("Success: geoMAPCoordsAPI",{url:geoMapCoords, geoMapData: geoMapCoords.data})
+      console.log("Success: geoMAPCoordsAPI", {
+        url: geoMapCoords,
+        geoMapData: geoMapCoords.data
+      })
     } else {
       throw new Meteor.Error('apt-connection-error', url)
     }
@@ -63,9 +84,17 @@ Meteor.methods({
     } else {
       throw new Meteor.Error('apt-connection-error', zipAPI)
     }
-    console.log("URLS:",{NECoordsAPI: url, geoMapCoords: geoMAPCoordsAPI , zipAPI, zipAPI })
-    console.log({location: coordinates, results: data})
-    if(data.altitude){
+    console.log("URLS:", {
+      NECoordsAPI: url,
+      geoMapCoords: geoMAPCoordsAPI,
+      zipAPI,
+      zipAPI
+    })
+    console.log({
+      location: coordinates,
+      results: data
+    })
+    if (data.altitude) {
       delete data.altitude
     }
     var dataReady = coordinates;
@@ -74,14 +103,98 @@ Meteor.methods({
     dataReady.createdAt = new Date();
     var dataReady = _.assign(dataReady, data)
     console.log("++++ INSERTING IN DATABSE +++++")
-    console.log({dataReady})
+    console.log({
+      dataReady
+    })
     Items.insert(dataReady)
     console.log("SUCCESS: DB Recoding Complete")
     return data
   }
 })
-/* --------------------------------------Dropped------------------------------------ */
-Meteor.startup(() => {
+/* ------------------------------------File Export---------------------------------- */
+
+Meteor.startup(function () {
+  saveFile()
+})
+
+
+SyncedCron.start();
+
+
+SyncedCron.add({
+  name: 'Crunch some important numbers for the marketing department',
+  schedule: function (parser) {
+    // parser is a later.parse object
+    // return parser.text('every 40 seconds')
+    return parser.text('at 7:00am every day');
+  },
+  job: function () {
+    saveFile()
+  }
+});
+
+
+/* -------------------------------------------------------------------------- */
+//covgeo_export_dd.mm.yy_hh.mm.ss.csv
+
+function saveFile() {
+
+  var dir = 'public'
+  console.log('Checking  '+dir+ " exists!")
+  if (!fs.existsSync(meteorPath + dir)) {
+    fs.mkdirSync(meteorPath + dir);
+  }
+
+  console.log('Directory: '+dir+ " is Ready!")
+
+  console.log("Deleting the old file")
+  var filesToDelete = getFilesFromPath(publicPath, "csv")
+  console.log(filesToDelete)
+  _.each(filesToDelete, (file) => {
+    fs.unlinkSync(publicPath + file)
+  })
+  console.log("Deleting the old file: SUCCESS")
+  var date = formatDate(new Date())
+  console.log("Setting File Date: ", date)
+  var file = 'covgeo_export_' + date + ".csv"
+  console.log("Setting File name", file)
+  console.log("Reading the data.......")
+  var items = Items.find().fetch()
+  var csv = Papa.unparse(items)
+  console.log("Writing Data: Items", items.length)
+  fs.writeFileSync(publicPath + file, csv, (err) => {
+    if (err) log('error', err);
+    log('progress', "File updated" + file);
+  });
+}
+
+function getFilesFromPath(path, extension) {
+  let dir = fs.readdirSync(path);
+  return dir.filter(elm => elm.match(new RegExp(`.*\.(${extension})`, 'ig')));
+}
+
+// covgeo_export_dd.mm.yy_hh.mm.ss.csv
+
+
+function formatDate(date) {
+  var d = new Date(date),
+    month = '' + (d.getMonth() + 1),
+    day = '' + d.getDate(),
+    year = d.getFullYear(),
+    h = d.getHours(),
+    m = d.getMinutes(),
+    s = d.getSeconds();
+  var output = day + "." + month + "." + year + "_" + h + "." + m + "." + s
+  console.log(output)
+  return output;
+}
+
+formatDate(new Date())
+
+/* --------------------------------------ZipCode------------------------------------ */
+
+
+function setZipCode() {
   if (Zips.find().count() == 0) {
     var dataset = assesLib.readAssets('CH.txt', 'text')
     var head = ['country', 'zip', 'place', 'adminName1', 'adminCode1', 'adminName2', 'adminCode2', 'adminName3', 'adminCode3', 'latitude', 'longitude', 'accuracy']
@@ -101,7 +214,7 @@ Meteor.startup(() => {
     console.log("ZipCode Database: Inserted and ready")
   }
   console.log('ZipCode Database is ready')
-});
+}
 /** Convert rows into obj Collection */
 function createRow(head, row) {
   var o = {}
@@ -111,18 +224,11 @@ function createRow(head, row) {
   // console.log(o)
   return o
 }
-/** */
-// function getCorrData(){ 
-//   var x = HTTP.get('https://eu1.locationiq.com/v1/reverse.php?key=YOUR_PRIVATE_TOKEN&lat=LATITUDE&lon=LONGITUDE&format=json' + ip + '.json');
-//   if (x && x.data) {
-//       return x.data;
-//   }
-// }
-/**
- * SSL
- */
-console.log('SSL Setting', Meteor.settings.isSSL)
+/* -------------------------------------------------------------------------- */
+/** SSL */
+
 Meteor.startup(function () {
+  console.log('SSL Setting', Meteor.settings.isSSL || 0)
   if (Meteor.settings.isSSL) {
     const isProduction = process.env.NODE_ENV !== 'development';
     if (!isProduction) {
@@ -153,3 +259,17 @@ Meteor.startup(function () {
     }
   }
 });
+/* -------------------------------------------------------------------------- */
+/** SetBrowserId */
+
+function setBrowserId() {
+  var browserId = Random.id()
+  var isExists = Items.findOne({
+    browserId: browserId
+  })
+  if (isExists) {
+    setBrowserId()
+  } else {
+    return browserId
+  }
+}
