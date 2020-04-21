@@ -163,7 +163,7 @@ function saveFile() {
   var items = Items.find().fetch()
   var items = _.map(items,(item)=>{
     var item = item;
-    item.zip = JSON.stringify(item.zip)
+    item.zlp = JSON.stringify(item.zlp)
     return item
   })
   var csv = Papa.unparse(items)
