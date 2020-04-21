@@ -3,3 +3,4 @@ settings.json
 ./settings.json
 private/cert.pem
 private/key.pem
+public/covgeo_export_daily_7am.csv
