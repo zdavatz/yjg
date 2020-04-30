@@ -122,7 +122,7 @@ SyncedCron.start();
 
 
 SyncedCron.add({
-  name: 'Crunch some important numbers for the marketing department',
+  name: 'Run at morning',
   schedule: function (parser) {
 
     return parser.text('at 7:00 am');
@@ -133,17 +133,6 @@ SyncedCron.add({
 });
 
 
-
-SyncedCron.add({
-  name: 'Run every 12 hrs',
-  schedule: function (parser) {
-
-    return parser.text('every 12 hours');
-  },
-  job: function () {
-    saveFile()
-  }
-});
 
 
 /* -------------------------------------------------------------------------- */
