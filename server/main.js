@@ -124,9 +124,21 @@ SyncedCron.start();
 SyncedCron.add({
   name: 'Crunch some important numbers for the marketing department',
   schedule: function (parser) {
-    // parser is a later.parse object
-    // return parser.text('every 40 seconds')
-    return parser.text('at 7:00am every day');
+
+    return parser.text('at 7:00 am');
+  },
+  job: function () {
+    saveFile()
+  }
+});
+
+
+
+SyncedCron.add({
+  name: 'Run every 12 hrs',
+  schedule: function (parser) {
+
+    return parser.text('every 12 hours');
   },
   job: function () {
     saveFile()
