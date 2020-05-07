@@ -7,6 +7,7 @@
 6. Geolocation and Browser-ID is saved in the database.
 7. If the Geolocation changes more then 100 meters, the user can save his location again.
 8. Translate GPS coordinates into PLZ and Streetname.
+9. Output [file](https://covgeo.ch/covgeo_export_daily_7am.csv) updated daily at 7 am.
 
 ## optional: configure locationiq.com
 Get the map token from https://locationiq.com
