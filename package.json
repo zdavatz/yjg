@@ -13,7 +13,7 @@
     "http-proxy": "^1.18.0",
     "ip-to-location": "^1.0.1",
     "jquery": "^3.4.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "meteor-node-stubs": "^1.0.0",
     "node-open-geocoder": "^4.0.1",
     "papaparse": "^5.2.0",
