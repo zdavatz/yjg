@@ -10,7 +10,7 @@
   "dependencies": {
     "@babel/runtime": "^7.8.3",
     "dotenv": "^8.2.0",
-    "http-proxy": "^1.18.0",
+    "http-proxy": "^1.18.1",
     "ip-to-location": "^1.0.1",
     "jquery": "^3.4.1",
     "lodash": "^4.17.19",
