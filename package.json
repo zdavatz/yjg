@@ -8,7 +8,7 @@
     "visualize": "meteor --production --extra-packages bundle-visualizer"
   },
   "dependencies": {
-    "@babel/runtime": "^7.8.3",
+    "@babel/runtime": "^7.26.10",
     "dotenv": "^8.2.0",
     "http-proxy": "^1.18.1",
     "ip-to-location": "^1.0.1",
